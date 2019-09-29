@@ -225,6 +225,26 @@ int writeArraytoFile(const std::string &outputfilename)
 //  return 1;
 }
 
+bool checkSorted(int j,constants::sortOrder so){
+		string str1 = entryarray[j].word;
+		string str2 = entryarray[j + 1].word;
+		toUpper(str1);
+		toUpper(str2);
+		switch (so) {
+		case constants::ASCENDING:
+			return str1>str2;
+		case constants::DESCENDING:
+			return str1<str2;
+		case constants::NONE:
+			return true;
+		case constants::NUMBER_OCCURRENCES:
+			return entryarray[j + 1].numberOfOccurences < entryarray[j].numberOfOccurences;
+		default:
+			cout << "this should never happen pls dont give me a fake sort order"<< std::endl;
+			throw 404;
+		}
+}
+
 
 /*
  * Sort myEntryArray based on so enum value.
@@ -234,71 +254,89 @@ int writeArraytoFile(const std::string &outputfilename)
  * void sortArray(constants::sortOrder so);
  */
 void sortArray(constants::sortOrder so){
-	if(so == constants::ASCENDING){
-		for(int i = 0; i < currentpos; i++){
-			string minWord = entryarray[i].word;
-			string tempMinWord = minWord;
-			toUpper(tempMinWord);
-			int minIndex = i;
-			for(int j = i; j < currentpos; j++){
-				string tempWord = entryarray[j].word;
-				toUpper(tempWord);
-				if(tempWord < tempMinWord){
-					minIndex = j;
-					minWord = entryarray[j].word;
-					tempMinWord = entryarray[j].word;
-					toUpper(tempMinWord);
-				}
-			}
-			if(minWord != entryarray[i].word){
-				entry swap = entryarray[i];
-				entryarray[i] = entryarray[minIndex];
-				entryarray[minIndex] = swap;
+//	if(so == constants::ASCENDING){
+//		for(int i = 0; i < currentpos; i++){
+//			string minWord = entryarray[i].word;
+//			string tempMinWord = minWord;
+//			toUpper(tempMinWord);
+//			int minIndex = i;
+//			for(int j = i; j < currentpos; j++){
+//				string tempWord = entryarray[j].word;
+//				toUpper(tempWord);
+//				if(tempWord < tempMinWord){
+//					minIndex = j;
+//					minWord = entryarray[j].word;
+//					tempMinWord = entryarray[j].word;
+//					toUpper(tempMinWord);
+//				}
+//			}
+//			if(minWord != entryarray[i].word){
+//				entry swap = entryarray[i];
+//				entryarray[i] = entryarray[minIndex];
+//				entryarray[minIndex] = swap;
+//			}
+//		}
+//
+//	}
+//	else if(so == constants::DESCENDING){
+//		for(int i = 0; i < currentpos; i++){
+//			string maxWord = entryarray[i].word;
+//			string tempMaxWord = maxWord;
+//			toUpper(tempMaxWord);
+//			int maxIndex = i;
+//			for(int j = i; j < currentpos; j++){
+//				string tempWord = entryarray[j].word;
+//				toUpper(tempWord);
+//				if(entryarray[j].word > maxWord){
+//					maxIndex = j;
+//					maxWord = entryarray[j].word;
+//					tempMaxWord = entryarray[j].word;
+//					toUpper(tempMaxWord);
+//				}
+//			}
+//			if(maxWord != entryarray[i].word){
+//				entry swap = entryarray[i];
+//				entryarray[i] = entryarray[maxIndex];
+//				entryarray[maxIndex] = swap;
+//			}
+//		}
+//	}
+//	else if(so == constants::NUMBER_OCCURRENCES){
+//		for(int i = 0; i < currentpos; i++){
+//			int minOccur = entryarray[i].numberOfOccurences;
+//			int minIndex = i;
+//			for(int j = i; j < currentpos; j++){
+//				if(entryarray[j].numberOfOccurences < minOccur){
+//					minIndex = j;
+//					minOccur = entryarray[j].numberOfOccurences;
+//				}
+//			}
+//			if(minOccur != entryarray[i].numberOfOccurences){
+//				entry swap = entryarray[i];
+//				entryarray[i] = entryarray[minIndex];
+//				entryarray[minIndex] = swap;
+//			}
+//		}
+//	}
+	cout<<"---------------------"<<std::endl;
+	for(int i=0;i <= currentpos;i++){
+		cout << entryarray[i].word<<" : "<<entryarray[i].numberOfOccurences<<std::endl;
+	}
+	bool swapped = true;
+	for (int i = 1; (i <= currentpos) && swapped; i++) {
+		swapped = false;
+		for (int j = 0; j < (currentpos - 1); j++) {
+			if (checkSorted(j,so)){//checks if j and j+1 are in order based on so
+				entryarray[j+1].word.swap(entryarray[j].word);
+				std::swap(entryarray[j+1].numberOfOccurences,entryarray[j].numberOfOccurences);
+				swapped = true;
 			}
 		}
-
 	}
-	else if(so == constants::DESCENDING){
-		for(int i = 0; i < currentpos; i++){
-			string maxWord = entryarray[i].word;
-			string tempMaxWord = maxWord;
-			toUpper(tempMaxWord);
-			int maxIndex = i;
-			for(int j = i; j < currentpos; j++){
-				string tempWord = entryarray[j].word;
-				toUpper(tempWord);
-				if(entryarray[j].word > maxWord){
-					maxIndex = j;
-					maxWord = entryarray[j].word;
-					tempMaxWord = entryarray[j].word;
-					toUpper(tempMaxWord);
-				}
-			}
-			if(maxWord != entryarray[i].word){
-				entry swap = entryarray[i];
-				entryarray[i] = entryarray[maxIndex];
-				entryarray[maxIndex] = swap;
-			}
-		}
+	cout<<"+++++++++++++++++++++++++++++"<<std::endl;
+	for(int i=0;i <= currentpos;i++){
+			cout << entryarray[i].word<<" : "<<entryarray[i].numberOfOccurences<<std::endl;
 	}
-	else if(so == constants::NUMBER_OCCURRENCES){
-		for(int i = 0; i < currentpos; i++){
-			int minOccur = entryarray[i].numberOfOccurences;
-			int minIndex = i;
-			for(int j = i; j < currentpos; j++){
-				if(entryarray[j].numberOfOccurences < minOccur){
-					minIndex = j;
-					minOccur = entryarray[j].numberOfOccurences;
-				}
-			}
-			if(minOccur != entryarray[i].numberOfOccurences){
-				entry swap = entryarray[i];
-				entryarray[i] = entryarray[minIndex];
-				entryarray[minIndex] = swap;
-			}
-		}
-	}
-
 }
 
 //TODO look in utilities.h for useful functions, particularly strip_unwanted_chars!
